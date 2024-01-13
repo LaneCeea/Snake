@@ -1,0 +1,3 @@
+# CMake generation dependency list for this directory.
+C:/dev/vs/Snake/Snake/vendor/glfw/CMake/glfw3.pc.in
+C:/dev/vs/Snake/Snake/vendor/glfw/src/CMakeLists.txt
