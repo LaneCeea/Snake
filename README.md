@@ -5,7 +5,8 @@ Open Visual Studio, select Clone a repository and enter the link.
 https://github.com/LaneCeea/Snake
 ```
 Since we choose not to use the pre-compiled binaries, so we have to compile the library ourselves and it's quite some work.  
-First, we have to build the GLFW submodule using CMake GUI. Source code path and building path are as following:
+First, we have to build the GLFW submodule using CMake GUI. Download CMake here: https://cmake.org/  
+Source code path and building path are as following:
 ```
 your-clone-path/Snake/Snake/vendor/glfw
 your-clone-path/Snake/build
