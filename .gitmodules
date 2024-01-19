@@ -1,3 +1,0 @@
-[submodule "Snake/vendor/imgui"]
-	path = Snake/vendor/imgui
-	url = https://github.com/ocornut/imgui
