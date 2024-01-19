@@ -3,9 +3,9 @@
 #include <Core/Application.h>
 #include <Core/Assert.h>
 
-#include <imgui/imgui.h>
-#include <imgui/backends/imgui_impl_glfw.h>
-#include <imgui/backends/imgui_impl_opengl3.h>
+#include <ImGui/imgui.h>
+#include <ImGui/imgui_impl_glfw.h>
+#include <ImGui/imgui_impl_opengl3.h>
 
 void ImGuiAPI::Init() {
     // imgui init

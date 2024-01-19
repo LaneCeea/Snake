@@ -1,5 +1,5 @@
-#ifndef IMGUI_IMGUIAPI_H_
-#define IMGUI_IMGUIAPI_H_
+#ifndef IMGUIAPI_IMGUIAPI_H_
+#define IMGUIAPI_IMGUIAPI_H_
 
 class ImGuiAPI {
 public:
@@ -9,4 +9,4 @@ public:
     static void Shutdown();
 };
 
-#endif // !IMGUI_IMGUIAPI_H_
+#endif // !IMGUIAPI_IMGUIAPI_H_
