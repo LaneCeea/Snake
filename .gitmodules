@@ -1,0 +1,6 @@
+[submodule "Snake/vendor/glfw"]	
+path = Snake/vendor/glfw	
+url = https://github.com/LaneCeea/glfw
+[submodule "Snake/vendor/imgui"]	
+path = Snake/vendor/imgui	
+url = https://github.com/LaneCeea/imgui
