@@ -37,14 +37,14 @@ static void APIENTRY _ErrorCallBack(
     default:                                type_str = "";                      break;
     }
     
-    LogType logtype = LogType::NONE;
+    LogType logtype = LogType::None;
     const char* severity_str;
     switch (severity) {
-    case GL_DEBUG_SEVERITY_HIGH:            severity_str = "high";          logtype = LogType::ERR;     break;
-    case GL_DEBUG_SEVERITY_MEDIUM:          severity_str = "medium";        logtype = LogType::ERR;     break;
-    case GL_DEBUG_SEVERITY_LOW:             severity_str = "low";           logtype = LogType::WARN;    break;
-    case GL_DEBUG_SEVERITY_NOTIFICATION:    severity_str = "notification";  logtype = LogType::INFO;    break;
-    default:                                severity_str = "";              logtype = LogType::NONE;    break;
+    case GL_DEBUG_SEVERITY_HIGH:            severity_str = "high";          logtype = LogType::Error;   break;
+    case GL_DEBUG_SEVERITY_MEDIUM:          severity_str = "medium";        logtype = LogType::Error;   break;
+    case GL_DEBUG_SEVERITY_LOW:             severity_str = "low";           logtype = LogType::Warn;    break;
+    case GL_DEBUG_SEVERITY_NOTIFICATION:    severity_str = "notification";  logtype = LogType::Info;    break;
+    default:                                severity_str = "";              logtype = LogType::None;    break;
     }
 
     Log(logtype,
@@ -89,4 +89,8 @@ void RendererAPI::ClearColor(float r, float g, float b, float a) {
 
 void RendererAPI::Clear() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void RendererAPI::SetViewPort(std::uint32_t w, std::uint32_t h) {
+    glViewport(0, 0, w, h);
 }

@@ -10,7 +10,8 @@ project "Snake"
         "src",
         "vendor/glfw/include",
         "vendor/glad/include",
-        "vendor/imgui/include"
+        "vendor/imgui",
+        "vendor",
     }
 
     links {

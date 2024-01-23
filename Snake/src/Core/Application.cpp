@@ -1,42 +1,97 @@
 #include "Application.h"
 
+#include <Core/Assert.h>
+#include <Core/Timer.h>
 #include <Renderer/RendererAPI.h>
-#include <ImGuiAPI/ImGuiAPI.h>
+#include <ImGui/ImGuiLayer.h>
+#include <Event/Event.h>
 
 #include <cmath>
 
-Application& Application::GetInstance() {
-    static Application s_Instance;
-    return s_Instance;
-}
+Application* Application::s_Instance = nullptr;
 
 Application::Application()
-    : m_Window(std::make_unique<Window>("Snake")) {
+    : m_Window(), m_IsRunning(true), m_IsMinimized(false),
+    m_ImGuiLayerPtr(), m_LayerStack() {
+    
+    CORE_ASSERT(s_Instance == nullptr, "Application already exist.");
+    s_Instance = this;
+
+    m_Window = std::make_unique<Window>("Snake");
+    m_Window->SetEventCallback(BIND_EVENT_FUNC(Application::OnEvent));
     RendererAPI::Init();
+
+    m_ImGuiLayerPtr = new ImGuiLayer();
+    PushOverlay(m_ImGuiLayerPtr);
 }
 
 Application::~Application() {
-    ImGuiAPI::Shutdown();
-    m_Window.release();
+    s_Instance = nullptr;
 }
 
 void Application::Run() {
-    ImGuiAPI::Init();
-    float Time = 0;
-    while (!m_Window->ShouldClose()) {
-        Time = static_cast<float>(Window::GetTime());
-        float r = (std::sin(Time) + 1.0f) / 2;
-        float g = (std::sin(Time * 1.5f) + 1.0f) / 2;
-        float b = (std::sin(Time * 2.4f) + 1.0f) / 2;
+    double _LastFrameTime = 0;
+    while (m_IsRunning) {
+        double _Time = Timer::GlobalTime();
+        double _Dt = _Time - _LastFrameTime;
+        _LastFrameTime = _Time;
+        if (!m_IsMinimized) {
+            
 
-        // imgui new frame
-        ImGuiAPI::NewFrame();
+            for (Layer* const _LayerPtr : m_LayerStack) {
+                _LayerPtr->OnUpdate(_Dt);
+            }
 
-        RendererAPI::ClearColor(r, g, b, 1.0f);
-        RendererAPI::Clear();
+            // imgui new frame
+            m_ImGuiLayerPtr->Begin();
 
-        ImGuiAPI::Render();
+            for (Layer* const _LayerPtr : m_LayerStack) {
+                _LayerPtr->OnImGuiRender();
+            }
 
+            m_ImGuiLayerPtr->End();
+        }
         m_Window->OnUpdata();
     }
+}
+
+void Application::OnEvent(Event& _Event) {
+    EventDispatcher _Dispatcher(_Event);
+
+    _Dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FUNC(Application::_OnWindowClose));
+    _Dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FUNC(Application::_OnWindowResize));
+
+    for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it) {
+        Layer* const _LayerPtr = *it;
+        if (_Event.IsHandled())
+            break;
+        _LayerPtr->OnEvent(_Event);
+    }
+}
+
+void Application::PushLayer(Layer* _LayerPtr){
+    m_LayerStack.PushLayer(_LayerPtr);
+    _LayerPtr->OnAttach();
+}
+
+void Application::PushOverlay(Layer* _OverlayPtr) {
+    m_LayerStack.PushOverlay(_OverlayPtr);
+    _OverlayPtr->OnAttach();
+}
+
+bool Application::_OnWindowClose(WindowCloseEvent& _Event) {
+    m_IsRunning = false;
+    return true;
+}
+
+bool Application::_OnWindowResize(WindowResizeEvent& _Event) {
+	if (_Event.GetWidth() == 0 || _Event.GetHeight() == 0) {
+		m_IsMinimized = true;
+		return false;
+	}
+
+	m_IsMinimized = false;
+	RendererAPI::SetViewPort(_Event.GetWidth(), _Event.GetHeight());
+
+	return false;
 }

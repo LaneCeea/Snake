@@ -5,14 +5,14 @@
 #include <cstdlib>
 
 #ifdef _DEBUG
-#define CORE_ASSERT(expression, ...)                                                        \
-    if (!expression) {                                                                      \
-        CORE_ERROR("Assertion failed at %s(%d): %s\n", __FILE__, __LINE__ , __VA_ARGS__);   \
+#define CORE_ASSERT(expression, message)                                                        \
+    if (!(expression)) {                                                                      \
+        CORE_ERROR("Assertion failed at %s(%d): %s\n", __FILE__, __LINE__ , message);   \
         std::abort();                                                                       \
     }
 
 #else // ^^^ _DEBUG ^^^ // vvv !_DEBUG vvv
-#define CORE_ASSERT(expression, type, ...) (void)(expression, type, __VA_ARGS__)
+#define CORE_ASSERT(expression, message) (void)(expression, message)
 
 #endif // _DEBUG
 

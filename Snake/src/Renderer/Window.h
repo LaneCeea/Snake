@@ -2,13 +2,17 @@
 #define RENDERER_WINDOW_H_
 
 #include <Renderer/GraphicContext.h>
+#include <Event/Event.h>
 
 #include <string>
+#include <functional>
 
 struct GLFWwindow;
 
 class Window {
 public:
+    using EventCallbackFn = std::function<void(Event&)>;
+
     Window() = default;
     Window(const std::string& _title, std::uint32_t _width = 900, std::uint32_t _height = 900);
     ~Window();
@@ -21,10 +25,8 @@ public:
     std::uint32_t GetHeight() const { return m_Data.height; }
     bool IsVSync() const { return m_Data.VSync; }
 
+    void SetEventCallback(const EventCallbackFn& _Func) { m_Data.EventCallBack = _Func; }
     void SetVSync(bool enable);
-
-    // need to remove
-    static double GetTime();
 
 private:
     GLFWwindow* m_Window;
@@ -34,6 +36,7 @@ private:
         std::string title;
         std::uint32_t width, height;
         bool VSync;
+        EventCallbackFn EventCallBack;
     };
 
     WindowData m_Data;

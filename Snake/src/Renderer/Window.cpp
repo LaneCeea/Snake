@@ -1,6 +1,7 @@
 #include "Window.h"
 
 #include <Core/Assert.h>
+#include <Event/ApplicationEvent.h>
 
 #include <GLFW/glfw3.h>
 
@@ -17,6 +18,7 @@ Window::Window(const std::string& _title, std::uint32_t _width, std::uint32_t _h
 #endif // _DEBUG
 
     CORE_INFO("GLFW library binrary - %s\n\n", glfwGetVersionString());
+
     m_Window = glfwCreateWindow(_width, _height, _title.c_str(), nullptr, nullptr);
     CORE_ASSERT(m_Window, "Failed to create GLFWwindow.");
 
@@ -24,7 +26,26 @@ Window::Window(const std::string& _title, std::uint32_t _width, std::uint32_t _h
     m_Context.Init();
 
     glfwSetWindowUserPointer(m_Window, &m_Data);
-    SetVSync(true);
+    SetVSync(false);
+
+    glfwSetWindowCloseCallback(m_Window,
+        [](GLFWwindow* window) {
+            WindowData* _Data = static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+            WindowCloseEvent _Event;
+            _Data->EventCallBack(_Event);
+        }
+    );
+
+    glfwSetWindowSizeCallback(m_Window,
+        [](GLFWwindow* window, int width, int height) {
+            WindowData* _Data = static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+            _Data->width  = width;
+            _Data->height = height;
+            
+            WindowResizeEvent _Event(width, height);
+            _Data->EventCallBack(_Event);
+        }
+    );
 }
 
 Window::~Window() {
@@ -44,8 +65,4 @@ int Window::ShouldClose() {
 void Window::SetVSync(bool enable) {
     glfwSwapInterval(enable ? 1 : 0);
     m_Data.VSync = enable;
-}
-
-double Window::GetTime() {
-    return glfwGetTime();
 }

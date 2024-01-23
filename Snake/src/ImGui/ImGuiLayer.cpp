@@ -1,14 +1,13 @@
-#include "ImGuiAPI.h"
+#include "ImGuiLayer.h"
 
 #include <Core/Application.h>
 #include <Core/Assert.h>
 
-#include <ImGui/imgui.h>
-#include <ImGui/imgui_impl_glfw.h>
-#include <ImGui/imgui_impl_opengl3.h>
+#include <imgui/imgui.h>
+#include <imgui/backends/imgui_impl_glfw.h>
+#include <imgui/backends/imgui_impl_opengl3.h>
 
-void ImGuiAPI::Init() {
-    // imgui init
+void ImGuiLayer::OnAttach() {
     bool success = IMGUI_CHECKVERSION();
     CORE_ASSERT(success, "Failed to initialize Dear ImGui.");
 
@@ -24,24 +23,31 @@ void ImGuiAPI::Init() {
     CORE_INFO("Dear ImGui version - %s\n\n", IMGUI_VERSION);
 }
 
-void ImGuiAPI::NewFrame() {
+void ImGuiLayer::OnDetach() {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+}
+
+void ImGuiLayer::OnUpdate(double _Dt) {
+
+}
+
+void ImGuiLayer::OnImGuiRender() {
+
+}
+
+void ImGuiLayer::OnEvent(Event& _Event) {
+
+}
+ 
+void ImGuiLayer::Begin() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 }
 
-void ImGuiAPI::Render() {
-    {
-        ImGui::Begin("Dear ImGui Debugger");
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS).", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        ImGui::End();
-    }
+void ImGuiLayer::End() {
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-}
-
-void ImGuiAPI::Shutdown() {
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
 }
