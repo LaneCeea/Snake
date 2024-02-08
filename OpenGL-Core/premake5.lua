@@ -4,13 +4,17 @@ project "OpenGL-Core"
     cppdialect "C++17"
     staticruntime "off"
 
-    files { "src/**.h", "src/**.cpp" }
+    files {
+        "src/**.h",
+        "src/**.cpp"
+    }
 
     includedirs {
         "src",
         "vendor/glfw/include",
         "vendor/glad/include",
         "vendor/imgui",
+        "vendor/glm",
         "vendor",
     }
 

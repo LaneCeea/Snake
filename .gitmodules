@@ -6,4 +6,4 @@
 	url = https://github.com/LaneCeea/imgui
 [submodule "OpenGL-Core/vendor/glm"]
 	path = OpenGL-Core/vendor/glm
-	url = https://github.com/icaven/glm
+	url = https://github.com/LaneCeea/glm

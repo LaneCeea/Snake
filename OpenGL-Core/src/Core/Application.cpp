@@ -30,7 +30,7 @@ Application::~Application() {
 }
 
 void Application::Run() {
-    double _LastFrameTime = 0;
+    double _LastFrameTime = Timer::GlobalTime();
     while (m_IsRunning) {
         double _Time = Timer::GlobalTime();
         double _Dt = _Time - _LastFrameTime;

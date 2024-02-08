@@ -3,6 +3,7 @@
 #include <Core/Log.h>
 
 #include <glad/glad.h>
+#include <glm/detail/setup.hpp>
 
 #ifdef _DEBUG
 
@@ -65,15 +66,18 @@ void RendererAPI::Init() {
     glDebugMessageCallback(_ErrorCallBack, nullptr);
 #endif // _DEBUG
 
-    const unsigned char* version    = glGetString(GL_VERSION);
+    const unsigned char* opengl     = glGetString(GL_VERSION);
+    const unsigned char* glsl       = glGetString(GL_SHADING_LANGUAGE_VERSION);
     const unsigned char* vendor     = glGetString(GL_VENDOR);
     const unsigned char* renderer   = glGetString(GL_RENDERER);
     CORE_INFO(
         "OpenGL   - %s\n"
+        "GLSL     - %s\n"
         "Vendor   - %s\n"
         "Renderer - %s\n\n",
-        version, vendor, renderer
+        opengl, glsl, vendor, renderer
     );
+    CORE_INFO("%s\n\n", GLM_VERSION_MESSAGE);
 
     glEnable(GL_DEPTH_TEST);
 

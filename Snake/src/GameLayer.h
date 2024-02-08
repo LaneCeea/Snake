@@ -1,6 +1,8 @@
 #ifndef SNAKE_GAMELAYER_H_
 #define SNAKE_GAMELAYER_H_
 
+#include "Snake.h"
+
 #include <Core/Layer.h>
 #include <Core/Timer.h>
 #include <Renderer/Shader.h>
@@ -22,11 +24,15 @@ public:
 
 private:
 
+	Snake m_Snake;
+
 	std::uint32_t m_SquareVA;
 	std::unique_ptr<Shader> m_FlatColorShader;
 
 	Timer m_GlobalTimer;
-	Timer m_IGT; // in-game timer
+	Timer m_Igt; // in-game timer
+	double m_TickInterval;
+	double m_CurrentTimeBetweenTick;
 };
 
 } // namespace Snake

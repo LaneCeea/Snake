@@ -25,8 +25,9 @@ function ConfigurationsSetting()
 end
 
 group "Dependencies"
-    include "OpenGL-Core/vendor/glfw"
     include "OpenGL-Core/vendor/glad"
+    include "OpenGL-Core/vendor/glfw"
+    include "OpenGL-Core/vendor/glm"
     include "OpenGL-Core/vendor/imgui"
 group ""
 
