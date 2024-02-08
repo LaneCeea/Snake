@@ -5,7 +5,7 @@
 int main() {
     std::cout << "hello hao hao siao\n";
     std::cout << "no hello hao hao siao\n";
-    auto App = CreateApplication();
+    Application* App = CreateApplication();
     App->Run();
     delete App;
 

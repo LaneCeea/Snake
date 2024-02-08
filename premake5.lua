@@ -25,9 +25,10 @@ function ConfigurationsSetting()
 end
 
 group "Dependencies"
-    include "Snake/vendor/glfw"
-    include "Snake/vendor/glad"
-    include "Snake/vendor/imgui"
+    include "OpenGL-Core/vendor/glfw"
+    include "OpenGL-Core/vendor/glad"
+    include "OpenGL-Core/vendor/imgui"
 group ""
 
+include "OpenGL-Core"
 include "Snake"

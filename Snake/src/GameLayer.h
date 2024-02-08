@@ -3,6 +3,9 @@
 
 #include <Core/Layer.h>
 #include <Core/Timer.h>
+#include <Renderer/Shader.h>
+
+#include <memory>
 
 namespace Snake {
 
@@ -18,8 +21,12 @@ public:
 	virtual void OnEvent(Event& _Event) override;
 
 private:
+
+	std::uint32_t m_SquareVA;
+	std::unique_ptr<Shader> m_FlatColorShader;
+
 	Timer m_GlobalTimer;
-	Timer m_IGT;
+	Timer m_IGT; // in-game timer
 };
 
 } // namespace Snake

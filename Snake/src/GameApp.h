@@ -1,8 +1,9 @@
 #ifndef SNAKE_GAMEAPP_H_
 #define SNAKE_GAMEAPP_H_
 
+#include "GameLayer.h"
+
 #include <Core/Application.h>
-#include <Snake/GameLayer.h>
 
 namespace Snake {
 

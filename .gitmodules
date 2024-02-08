@@ -1,6 +1,6 @@
-[submodule "Snake/vendor/glfw"]	
-path = Snake/vendor/glfw	
-url = https://github.com/LaneCeea/glfw
-[submodule "Snake/vendor/imgui"]	
-path = Snake/vendor/imgui	
-url = https://github.com/LaneCeea/imgui
+[submodule "OpenGL-Core/vendor/glfw"]
+	path = OpenGL-Core/vendor/glfw
+	url = https://github.com/LaneCeea/glfw
+[submodule "OpenGL-Core/vendor/imgui"]
+	path = OpenGL-Core/vendor/imgui
+	url = https://github.com/LaneCeea/imgui

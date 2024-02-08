@@ -1,5 +1,5 @@
-project "Snake"
-    kind "ConsoleApp"
+project "OpenGL-Core"
+    kind "StaticLib"
     language "C++"
     cppdialect "C++17"
     staticruntime "off"
@@ -8,15 +8,17 @@ project "Snake"
 
     includedirs {
         "src",
-        "%{wks.location}/OpenGL-Core/src",
-        "%{wks.location}/OpenGL-Core/vendor/glfw/include",
-        "%{wks.location}/OpenGL-Core/vendor/glad/include",
-        "%{wks.location}/OpenGL-Core/vendor/imgui",
-        "%{wks.location}/OpenGL-Core/vendor",
+        "vendor/glfw/include",
+        "vendor/glad/include",
+        "vendor/imgui",
+        "vendor",
     }
 
     links {
-        "OpenGL-Core"
+        "opengl32.lib",
+        "GLFW",
+        "Glad",
+        "ImGui"
     }
 
     targetdir("../bin/" .. OutputDir .. "/%{prj.name}")
