@@ -15,7 +15,7 @@ namespace Snake {
 
 GameLayer::GameLayer() : 
     Layer("Snake::GameLayer"),
-    m_Snake(), m_SquareVA(0), m_FlatColorShader(), m_TickInterval(1.0 / 6.0), m_CurrentTimeBetweenTick(0.0) {
+    m_Snake(), m_SquareVao(), m_FlatColorShader(), m_TickInterval(1.0 / 6.0), m_CurrentTimeBetweenTick(0.0) {
 }
 
 GameLayer::~GameLayer() {
@@ -40,30 +40,17 @@ void GameLayer::OnAttach() {
             0, 1, 2, 2, 3, 0,
         };
 
-        glGenVertexArrays(1, &m_SquareVA);
-        glBindVertexArray(m_SquareVA);
-        
-        std::uint32_t _Vbo = 0;
-        glGenBuffers(1, &_Vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, _Vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * _Verticies.size(), _Verticies.data(), GL_STATIC_DRAW);
-
-        std::uint32_t _Ebo = 0;
-        glGenBuffers(1, &_Ebo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _Ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(std::uint32_t) * _Indicies.size(), _Indicies.data(), GL_STATIC_DRAW);
-
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * _StrideCount, (const void*)(0));
-        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * _StrideCount, (const void*)(3 * sizeof(float)));
-        glBindVertexArray(0);
+        m_SquareVao = std::make_unique<VertexArray>(_Verticies, _Indicies,
+            VertexLayout{
+                ShaderDataType::Float3,
+                ShaderDataType::Float4,
+            });
     }
     m_FlatColorShader = std::make_unique<Shader>("res/shader/FlatColor.glsl");
 }
 
 void GameLayer::OnDetach() {
-    glDeleteVertexArrays(1, &m_SquareVA);
+    m_SquareVao.release();
     m_FlatColorShader.release();
 }
 
@@ -106,13 +93,11 @@ void GameLayer::OnUpdate(double _Dt) {
     const auto& _SnakeBody = m_Snake.Body();
     for (const auto& _Pos : _SnakeBody) {
         const glm::vec3 _Pos3D      = glm::vec3(_Pos, 0.0f);
-        const glm::mat4 _Scale      = glm::scale(glm::identity<glm::mat4>(), glm::vec3(0.1f));
+        const glm::mat4 _Scale      = glm::scale(glm::identity<glm::mat4>(), glm::vec3(0.01f));
         const glm::mat4 _Translate  = glm::translate(glm::identity<glm::mat4>(), _Pos3D);
         const glm::mat4 _Model      = _Scale * _Translate;
         m_FlatColorShader->SetUniform("u_Mvp", _ProjView * _Model);
-        glBindVertexArray(m_SquareVA);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-        glBindVertexArray(0);
+        RendererAPI::Draw(*m_SquareVao);
     }
 
     m_FlatColorShader->UnBind();

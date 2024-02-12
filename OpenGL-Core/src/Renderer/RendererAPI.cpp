@@ -98,3 +98,9 @@ void RendererAPI::Clear() {
 void RendererAPI::SetViewPort(std::uint32_t w, std::uint32_t h) {
     glViewport(0, 0, w, h);
 }
+
+void RendererAPI::Draw(const VertexArray& _Vao) {
+    _Vao.Bind();
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    _Vao.Unbind();
+}

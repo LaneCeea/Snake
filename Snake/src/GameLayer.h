@@ -6,6 +6,7 @@
 #include <Core/Layer.h>
 #include <Core/Timer.h>
 #include <Renderer/Shader.h>
+#include <Renderer/VertexArray.h>
 
 #include <memory>
 
@@ -26,7 +27,7 @@ private:
 
 	Snake m_Snake;
 
-	std::uint32_t m_SquareVA;
+	std::unique_ptr<VertexArray> m_SquareVao;
 	std::unique_ptr<Shader> m_FlatColorShader;
 
 	Timer m_GlobalTimer;
