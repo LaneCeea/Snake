@@ -12,7 +12,7 @@
     }
 
 #else // ^^^ _DEBUG ^^^ // vvv !_DEBUG vvv
-#define CORE_ASSERT(expression, message) (void)(expression, message)
+#define CORE_ASSERT(expression, message) static_cast<void>(0)
 
 #endif // _DEBUG
 

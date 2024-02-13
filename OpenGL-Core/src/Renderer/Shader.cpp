@@ -7,7 +7,20 @@
 
 #include <fstream>
 
+Shader::Shader() :
+    m_ReferenceID(0), m_IsBind(false), m_UniformLocationMap() {
+}
+
 Shader::Shader(std::string_view _glslPath) {
+    Init(_glslPath);
+}
+
+Shader::~Shader() {
+    if (m_ReferenceID)
+        Destroy();
+}
+
+void Shader::Init(std::string_view _glslPath) {
     m_ReferenceID = glCreateProgram();
     m_IsBind = false;
 
@@ -40,7 +53,14 @@ Shader::Shader(std::string_view _glslPath) {
     }
 }
 
-void Shader::Bind() {
+void Shader::Destroy() {
+    glDeleteProgram(m_ReferenceID);
+    m_ReferenceID = 0;
+    m_IsBind = false;
+    m_UniformLocationMap.clear();
+}
+
+void Shader::Bind() const {
     if (m_IsBind) {
         CORE_WARN("Attempt to bind an already bind shader.\n");
         return;
@@ -49,7 +69,7 @@ void Shader::Bind() {
     glUseProgram(m_ReferenceID);
 }
 
-void Shader::UnBind() {
+void Shader::UnBind() const {
     if (!m_IsBind) {
         CORE_WARN("Attempt to unbind an already unbind shader.\n");
         return;

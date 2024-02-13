@@ -8,10 +8,10 @@
 #define CORE_TRACE(...)     Log(LogType::Trace, __VA_ARGS__)
 
 #else // ^^^ _DEBUG ^^^ // vvv !_DEBUG vvv
-#define CORE_ERROR(...)     (void)(__VA_ARGS__)
-#define CORE_WARN(...)      (void)(__VA_ARGS__)
-#define CORE_INFO(...)      (void)(__VA_ARGS__)
-#define CORE_TRACE(...)     (void)(__VA_ARGS__)
+#define CORE_ERROR(...)     static_cast<void>(0)
+#define CORE_WARN(...)      static_cast<void>(0)
+#define CORE_INFO(...)      static_cast<void>(0)
+#define CORE_TRACE(...)     static_cast<void>(0)
 
 #endif // _DEBUG
 

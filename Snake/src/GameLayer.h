@@ -5,8 +5,8 @@
 
 #include <Core/Layer.h>
 #include <Core/Timer.h>
+#include <Event/KeyEvent.h>
 #include <Renderer/Shader.h>
-#include <Renderer/VertexArray.h>
 
 #include <memory>
 
@@ -23,17 +23,19 @@ public:
 	virtual void OnImGuiRender() override;
 	virtual void OnEvent(Event& _Event) override;
 
+	bool OnKeyEvent(KeyEvent& _KeyEvent);
+
 private:
-
 	Snake m_Snake;
+	Snake::MoveDirection m_SnakeNextDir;
 
-	std::unique_ptr<VertexArray> m_SquareVao;
-	std::unique_ptr<Shader> m_FlatColorShader;
+	Shader m_FlatColorShader;
 
 	Timer m_GlobalTimer;
 	Timer m_Igt; // in-game timer
 	double m_TickInterval;
 	double m_CurrentTimeBetweenTick;
+	bool m_IsRunning;
 };
 
 } // namespace Snake

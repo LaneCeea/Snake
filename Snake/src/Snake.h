@@ -4,6 +4,7 @@
 #include <glm/ext/vector_int2.hpp>
 
 #include <deque>
+#include <vector>
 
 namespace Snake {
 
@@ -14,22 +15,30 @@ public:
         Up, Down, Left, Right
     };
 
-    using Container = std::deque<glm::ivec2>;
+    using Coord             = glm::ivec2;
+    using BodyContainer     = std::deque<glm::ivec2>;
+    using TargetContainer   = std::vector<glm::ivec2>;
 
 public:
     Snake();
 
+    void Restart();
     void Move(MoveDirection _Dir);
 
-    const Container& Body() const { return m_Body; }
+    const BodyContainer& Body() const       { return m_Body; }
+    const TargetContainer& Target() const   { return m_Target; }
+    constexpr bool IsGameEnd() const        { return m_IsGameEnd; }
 
     void PrintBody() const;
 
     static bool IsMoveDirectionOpposite(MoveDirection _Lhs, MoveDirection _Rhs);
 
 private:
-    Container m_Body;
+    BodyContainer m_Body;
     MoveDirection m_CurrentDir;
+    TargetContainer m_Target;
+
+    bool m_IsGameEnd;
 };
 
 } // namespace Snake

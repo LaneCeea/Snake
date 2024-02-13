@@ -14,6 +14,10 @@ void ImGuiLayer::OnAttach() {
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
 
+    auto& _IO = ImGui::GetIO();
+    float _FontSize = 18.0f;
+    _IO.Fonts->AddFontFromFileTTF("res/font/CascadiaMono.ttf", _FontSize);
+
     success = ImGui_ImplGlfw_InitForOpenGL(Application::GetInstance().GetWindow().GetNativeWindow(), true);
     CORE_ASSERT(success, "Failed to initialize imgui_impl_glfw backend.");
 

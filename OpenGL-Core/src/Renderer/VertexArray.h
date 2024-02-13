@@ -21,6 +21,14 @@ public:
 
     ~VertexArray();
 
+    template<std::size_t _Size1, std::size_t _Size2>
+    void Init(
+        const std::array<float, _Size1>& _Verticies,
+        const std::array<std::uint32_t, _Size2>& _Indicies,
+        const VertexLayout& _Layout) {
+        Init(_Verticies.data(), _Verticies.size(), _Indicies.data(), _Indicies.size(), _Layout);
+    }
+
     void Init(
         const float* _Verticies, std::size_t _VerticiesSize,
         const std::uint32_t* _Indicies, std::size_t _IndiciesSize,

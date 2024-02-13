@@ -13,7 +13,7 @@ enum class EventType
 	None = 0,
 	WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
 	AppTick, AppUpdate, AppRender,
-	KeyPressed, KeyReleased, KeyTyped,
+	Key, KeyTyped,
 	MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 };
 
@@ -27,11 +27,11 @@ enum EventCategory
 	EventCategoryMouseButton    = BIT(4)
 };
 
-#define EVENT_CLASS_TYPE(type)	static EventType StaticType() { return type; }				\
-								virtual EventType Type() const override { return StaticType(); }	\
-								virtual const char* Name() const override { return #type; }
+#define EVENT_CLASS_TYPE(type)			static EventType StaticType() { return type; }					\
+										virtual EventType Type() const override { return StaticType(); }\
+										virtual const char* Name() const override { return #type; }
 
-#define EVENT_CLASS_CATEGORY(category) virtual int CategoryFlags() const override { return category; }
+#define EVENT_CLASS_CATEGORY(category)	virtual int CategoryFlags() const override { return category; }
 
 class Event {
 public:
@@ -41,7 +41,10 @@ public:
 	virtual EventType Type() const = 0;
 	virtual const char* Name() const = 0;
 	virtual int CategoryFlags() const = 0;
-	virtual std::string ToString() const { return Name(); }
+
+	virtual void Trace() const {
+		CORE_TRACE("%s\n", Name());
+	}
 
 	bool IsInCategory(EventCategory _Category) const {
 		return CategoryFlags() & _Category;
@@ -61,7 +64,6 @@ public:
     template <class _EventCl, class _Func>
     bool Dispatch(const _Func& _EventCallbackFunc) {
 		if (m_Event.Type() == _EventCl::StaticType()) {
-			CORE_TRACE("%s\n", m_Event.ToString().c_str());
 			m_Event.m_IsHandled |= _EventCallbackFunc(static_cast<_EventCl&>(m_Event));
 			return true;
 		}

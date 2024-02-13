@@ -11,7 +11,8 @@ static void APIENTRY _ErrorCallBack(
     GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
     const GLchar* message, const void* userParam) {
 
-    if (id == 131185) return;
+    if (id == 131185)
+        return;
 
     const char* source_str;
     switch (source) {
@@ -101,6 +102,6 @@ void RendererAPI::SetViewPort(std::uint32_t w, std::uint32_t h) {
 
 void RendererAPI::Draw(const VertexArray& _Vao) {
     _Vao.Bind();
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    glDrawElements(GL_TRIANGLES, _Vao.IndexCount(), GL_UNSIGNED_INT, nullptr);
     _Vao.Unbind();
 }

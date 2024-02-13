@@ -29,6 +29,7 @@ group "Dependencies"
     include "OpenGL-Core/vendor/glfw"
     include "OpenGL-Core/vendor/glm"
     include "OpenGL-Core/vendor/imgui"
+    include "OpenGL-Core/vendor/stb"
 group ""
 
 include "OpenGL-Core"

@@ -4,6 +4,8 @@
 #include <Renderer/GraphicContext.h>
 #include <Event/Event.h>
 
+#include <glm/ext/vector_uint2.hpp>
+
 #include <string>
 #include <functional>
 
@@ -23,6 +25,7 @@ public:
     GLFWwindow* GetNativeWindow() { return m_Window; }
     std::uint32_t GetWidth() const { return m_Data.width; }
     std::uint32_t GetHeight() const { return m_Data.height; }
+    glm::uvec2 GetDimension() const { return { m_Data.width, m_Data.height }; }
     bool IsVSync() const { return m_Data.VSync; }
 
     void SetEventCallback(const EventCallbackFn& _Func) { m_Data.EventCallBack = _Func; }

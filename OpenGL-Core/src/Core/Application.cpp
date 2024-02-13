@@ -3,6 +3,7 @@
 #include <Core/Assert.h>
 #include <Core/Timer.h>
 #include <Renderer/RendererAPI.h>
+#include <Renderer/Renderer.h>
 #include <ImGui/ImGuiLayer.h>
 #include <Event/Event.h>
 
@@ -17,9 +18,11 @@ Application::Application()
     CORE_ASSERT(s_Instance == nullptr, "Application already exist.");
     s_Instance = this;
 
-    m_Window = std::make_unique<Window>("Snake");
+    m_Window = std::make_unique<Window>("Snake", 1200, 900);
     m_Window->SetEventCallback(BIND_EVENT_FUNC(Application::OnEvent));
     RendererAPI::Init();
+    RendererAPI::SetViewPort(1200, 900);
+    Renderer::Init();
 
     m_ImGuiLayerPtr = new ImGuiLayer();
     PushOverlay(m_ImGuiLayerPtr);
@@ -56,6 +59,7 @@ void Application::Run() {
 }
 
 void Application::OnEvent(Event& _Event) {
+    _Event.Trace();
     EventDispatcher _Dispatcher(_Event);
 
     _Dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FUNC(Application::_OnWindowClose));

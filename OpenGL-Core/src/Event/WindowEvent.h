@@ -1,10 +1,11 @@
-#ifndef EVENT_APPLICATIONEVENT_H_
-#define EVENT_APPLICATIONEVENT_H_
+#ifndef EVENT_WINDOWEVENT_H_
+#define EVENT_WINDOWEVENT_H_
 
 #include "Event.h"
 
+#include <Core/Log.h>
+
 #include <cstdint>
-#include <sstream>
 
 class WindowCloseEvent : public Event {
 public:
@@ -19,14 +20,12 @@ public:
 	WindowResizeEvent(std::uint32_t _Width, std::uint32_t _Height)
 		: m_Width(_Width), m_Height(_Height) {}
 
-    std::uint32_t GetWidth() const { return m_Width; }
+    std::uint32_t GetWidth() const  { return m_Width; }
     std::uint32_t GetHeight() const { return m_Height; }
 
-	std::string ToString() const override {
-		std::stringstream ss;
-		ss << Name() << ": " << m_Width << ", " << m_Height;
-		return ss.str();
-	}
+    void Trace() const override {
+        CORE_TRACE("%s: %u, %u\n", Name(), m_Width, m_Height);
+    }
 
     EVENT_CLASS_TYPE(EventType::WindowResize)
     EVENT_CLASS_CATEGORY(EventCategoryApplication)
@@ -35,4 +34,4 @@ private:
     std::uint32_t m_Width, m_Height;
 };
 
-#endif // !EVENT_APPLICATIONEVENT_H_
+#endif // !EVENT_WINDOWEVENT_H_

@@ -22,7 +22,8 @@ project "OpenGL-Core"
         "opengl32.lib",
         "GLFW",
         "Glad",
-        "ImGui"
+        "ImGui",
+        "stb"
     }
 
     targetdir("../bin/" .. OutputDir .. "/%{prj.name}")

@@ -1,7 +1,8 @@
 #include "Window.h"
 
 #include <Core/Assert.h>
-#include <Event/ApplicationEvent.h>
+#include <Event/WindowEvent.h>
+#include <Event/KeyEvent.h>
 
 #include <GLFW/glfw3.h>
 
@@ -25,8 +26,12 @@ Window::Window(const std::string& _title, std::uint32_t _width, std::uint32_t _h
     m_Context = GraphicContext(m_Window);
     m_Context.Init();
 
-    glfwSetWindowUserPointer(m_Window, &m_Data);
+    m_Data.title    = _title;
+    m_Data.width    = _width;
+    m_Data.height   = _height;
     SetVSync(false);
+
+    glfwSetWindowUserPointer(m_Window, &m_Data);
 
     glfwSetWindowCloseCallback(m_Window,
         [](GLFWwindow* window) {
@@ -43,6 +48,14 @@ Window::Window(const std::string& _title, std::uint32_t _width, std::uint32_t _h
             _Data->height = height;
             
             WindowResizeEvent _Event(width, height);
+            _Data->EventCallBack(_Event);
+        }
+    );
+
+    glfwSetKeyCallback(m_Window,
+        [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+            WindowData* _Data = static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+            KeyEvent _Event(key, scancode, action, mods);
             _Data->EventCallBack(_Event);
         }
     );

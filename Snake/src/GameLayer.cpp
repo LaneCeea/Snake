@@ -1,7 +1,9 @@
 #include "GameLayer.h"
 
 #include <Core/Input.h>
+#include <Core/Application.h> // for proj matrix
 #include <ImGui/imgui.h>
+#include <Renderer/Renderer.h>
 #include <Renderer/RendererAPI.h>
 #include <Renderer/VertexArray.h>
 
@@ -15,7 +17,9 @@ namespace Snake {
 
 GameLayer::GameLayer() : 
     Layer("Snake::GameLayer"),
-    m_Snake(), m_SquareVao(), m_FlatColorShader(), m_TickInterval(1.0 / 6.0), m_CurrentTimeBetweenTick(0.0) {
+    m_Snake(), m_SnakeNextDir(Snake::MoveDirection::None),
+    m_FlatColorShader(), m_TickInterval(1.0 / 10.0), m_CurrentTimeBetweenTick(0.0),
+    m_IsRunning(false) {
 }
 
 GameLayer::~GameLayer() {
@@ -25,94 +29,132 @@ GameLayer::~GameLayer() {
 void GameLayer::OnAttach() {
     m_GlobalTimer.Start();
     m_Igt.Start();
-    {
-        // Create m_SquareVA
-        constexpr std::size_t _StrideCount = 7;
-        const std::array<float, _StrideCount * 4> _Verticies = {
-            // Positions       |  Colors                   |
-            -0.5f, -0.5f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, // 0
-             0.5f, -0.5f,  1.0f,  0.0f,  1.0f,  0.0f,  1.0f, // 1
-             0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f, // 2
-            -0.5f,  0.5f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f, // 3
-        };
-
-        const std::array<std::uint32_t, 6> _Indicies = {
-            0, 1, 2, 2, 3, 0,
-        };
-
-        m_SquareVao = std::make_unique<VertexArray>(_Verticies, _Indicies,
-            VertexLayout{
-                ShaderDataType::Float3,
-                ShaderDataType::Float4,
-            });
-    }
-    m_FlatColorShader = std::make_unique<Shader>("res/shader/FlatColor.glsl");
+    m_Igt.Pause();
+    m_FlatColorShader.Init("res/shader/FlatColor.glsl");
 }
 
 void GameLayer::OnDetach() {
-    m_SquareVao.release();
-    m_FlatColorShader.release();
+    m_FlatColorShader.Destroy();
 }
 
 void GameLayer::OnUpdate(double _Dt) {
 
-    m_CurrentTimeBetweenTick += _Dt;
-    if (m_CurrentTimeBetweenTick >= m_TickInterval) {
-        m_CurrentTimeBetweenTick -= m_TickInterval;
-        if (Input::IsKeyPressed(Key::UP)) {
-            m_Snake.Move(Snake::MoveDirection::Up);
-        } else if (Input::IsKeyPressed(Key::DOWN)) {
-            m_Snake.Move(Snake::MoveDirection::Down);
-        } else if (Input::IsKeyPressed(Key::LEFT)) {
-            m_Snake.Move(Snake::MoveDirection::Left);
-        } else if (Input::IsKeyPressed(Key::RIGHT)) {
-            m_Snake.Move(Snake::MoveDirection::Right);
-        } else {
-            m_Snake.Move(Snake::MoveDirection::None);
+    if (m_IsRunning && !m_Snake.IsGameEnd()) {
+        double _LastTime = m_Igt.Last();
+        double _CurrTime = m_Igt.Now();
+
+        m_CurrentTimeBetweenTick += _CurrTime - _LastTime;
+        if (m_CurrentTimeBetweenTick >= m_TickInterval) {
+            m_CurrentTimeBetweenTick -= m_TickInterval;
+
+            // key press is query by key event to detect pressing between frame
+            m_Snake.Move(m_SnakeNextDir);
         }
     }
 
-    double _GlobalTime = m_GlobalTimer.Time();
-    float r = static_cast<float>(std::sin(_GlobalTime) + 1.0f) / 2;
-    float g = static_cast<float>(std::sin(_GlobalTime * 1.5f) + 1.0f) / 2;
-    float b = static_cast<float>(std::sin(_GlobalTime * 2.4f) + 1.0f) / 2;
     RendererAPI::ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     RendererAPI::Clear();
 
-    const glm::mat4 _Proj       = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
+    auto _WindowDimension       = Application::GetInstance().GetWindow().GetDimension();
+    float _Ratio                = static_cast<float>(_WindowDimension.x) / _WindowDimension.y;
+    const glm::mat4 _Proj       = glm::perspective(glm::radians(45.0f), _Ratio, 0.1f, 100.0f);
 
-    const glm::vec3 _Position   = glm::vec3(0.0f, 0.0f, -1.0f);
-    const glm::vec3 _Front      = glm::vec3(0.0f, 0.0f,  1.0f);
+    const glm::vec3 _Position   = glm::vec3(0.0f, 0.0f,  1.0f);
+    const glm::vec3 _Front      = glm::vec3(0.0f, 0.0f, -1.0f);
     const glm::vec3 _Up         = glm::vec3(0.0f, 1.0f,  0.0f);
     const glm::mat4 _View       = glm::lookAt(_Position, _Position + _Front, _Up);
 
     const glm::mat4 _ProjView = _Proj * _View;
 
-    m_FlatColorShader->Bind();
+    m_FlatColorShader.Bind();
 
     const auto& _SnakeBody = m_Snake.Body();
     for (const auto& _Pos : _SnakeBody) {
         const glm::vec3 _Pos3D      = glm::vec3(_Pos, 0.0f);
-        const glm::mat4 _Scale      = glm::scale(glm::identity<glm::mat4>(), glm::vec3(0.01f));
+        const glm::mat4 _Scale      = glm::scale(glm::identity<glm::mat4>(), glm::vec3(0.02f));
         const glm::mat4 _Translate  = glm::translate(glm::identity<glm::mat4>(), _Pos3D);
         const glm::mat4 _Model      = _Scale * _Translate;
-        m_FlatColorShader->SetUniform("u_Mvp", _ProjView * _Model);
-        RendererAPI::Draw(*m_SquareVao);
+        m_FlatColorShader.SetUniform("u_Mvp", _ProjView * _Model);
+        m_FlatColorShader.SetUniform("u_Color", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+        Renderer::DrawSquare();
     }
 
-    m_FlatColorShader->UnBind();
+    const auto& _SnakeTarget = m_Snake.Target();
+    for (const auto& _Pos : _SnakeTarget) {
+        const glm::vec3 _Pos3D      = glm::vec3(_Pos, 0.0f);
+        const glm::mat4 _Scale      = glm::scale(glm::identity<glm::mat4>(), glm::vec3(0.02f));
+        const glm::mat4 _Translate  = glm::translate(glm::identity<glm::mat4>(), _Pos3D);
+        const glm::mat4 _Model      = _Scale * _Translate;
+        m_FlatColorShader.SetUniform("u_Mvp", _ProjView * _Model);
+        m_FlatColorShader.SetUniform("u_Color", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+        Renderer::DrawSquare();
+    }
+
+    m_FlatColorShader.UnBind();
 }
 
 void GameLayer::OnImGuiRender() {
     {
         ImGui::Begin("Game Debugger");
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS).", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::Text("Press ESC to start/pause/resume.");
+        ImGui::Text("IGT: %.3f", m_Igt.Last());
+        if (m_Snake.IsGameEnd()) {
+            ImGui::Text("Game has ended, press ENTER to start a new game.");
+        }
         ImGui::End();
     }
 }
 
 void GameLayer::OnEvent(Event& _Event) {
+    EventDispatcher _Dispatcher(_Event);
 
+    _Dispatcher.Dispatch<KeyEvent>(BIND_EVENT_FUNC(OnKeyEvent));
+}
+
+bool GameLayer::OnKeyEvent(KeyEvent& _KeyEvent) {
+    if (_KeyEvent.Action() == Key::Action::PRESS) {
+
+        switch (_KeyEvent.Key()) {
+        case Key::ESCAPE: {
+            m_IsRunning = !m_IsRunning;
+            if (m_IsRunning) {
+                m_Igt.Resume();
+            } else {
+                m_Igt.Pause();
+            }
+            return true;
+        }
+        case Key::ENTER: {
+            if (m_Snake.IsGameEnd()) {
+                m_Snake.Restart();
+                m_Igt.Reset();
+                m_Igt.Start();
+                return true;
+            }
+            break;
+        }
+        case Key::UP: {
+            m_SnakeNextDir = Snake::MoveDirection::Up;
+            return true;
+        }
+        case Key::DOWN: {
+            m_SnakeNextDir = Snake::MoveDirection::Down;
+            return true;
+        }
+        case Key::LEFT: {
+            m_SnakeNextDir = Snake::MoveDirection::Left;
+            return true;
+        }
+        case Key::RIGHT: {
+            m_SnakeNextDir = Snake::MoveDirection::Right;
+            return true;
+        }
+        default:
+            break;
+        }
+    }
+    return false;
 }
 
 

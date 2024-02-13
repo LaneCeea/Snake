@@ -14,10 +14,15 @@
 
 class Shader {
 public:
+    Shader();
     Shader(std::string_view _glslPath);
+    ~Shader();
 
-    void Bind();
-    void UnBind();
+    void Init(std::string_view _glslPath);
+    void Destroy();
+
+    void Bind() const;
+    void UnBind() const;
 
 private:
     static void _CompileShader(std::uint32_t& _ShaderID, const std::string& _FilePath);
@@ -47,7 +52,7 @@ private:
 
 private:
     std::uint32_t m_ReferenceID;
-    bool m_IsBind;
+    mutable bool m_IsBind;
     mutable std::unordered_map<std::string_view, std::int32_t> m_UniformLocationMap;
 };
 

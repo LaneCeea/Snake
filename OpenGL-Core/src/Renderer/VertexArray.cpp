@@ -24,7 +24,7 @@ void VertexArray::Init(
     m_IndexCount = static_cast<std::uint32_t>(_IndiciesSize);
 
     std::uint32_t _Index = 0;
-    std::size_t _Stride = _Layout.Stride();
+    std::int32_t _Stride = static_cast<std::int32_t>(_Layout.Stride());
     std::size_t _Offset = 0;
     for (const auto& _Type : _Layout) {
         glEnableVertexAttribArray(_Index);

@@ -5,7 +5,7 @@
 
 class Input {
 public:
-    static bool IsKeyPressed(KeyCode _Key);
+    static bool IsKeyPressed(Key::KeyCode _Key);
 };
 
 #endif // !CORE_INPUT_H_

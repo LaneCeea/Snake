@@ -7,34 +7,41 @@
 
 class Timer {
 public:
+    using RepType       = double;
     using ClockType     = std::chrono::high_resolution_clock;
     using TimePointType = ClockType::time_point;
-    using DurationType  = std::chrono::duration<double>;
+    using DurationType  = std::chrono::duration<RepType>;
 
 public:
     Timer() :
         m_Start(), m_PauseStart(), m_PauseDur(DurationType::zero()),
+        m_LastCallTime(0.0),
         m_IsStarted(false), m_IsRunning(false) {
     }
 
     ~Timer() = default;
 
-    double Time() const {
+    RepType Now() const {
         if (!m_IsStarted) {
             return DurationType::zero().count();
         }
 
         const TimePointType _Now                = ClockType::now();
         const DurationType _RealTimeDur         = _Now - m_Start;
+        DurationType _TimerDur;
 
         if (m_IsRunning) {
-            const DurationType _TimerDur        = _RealTimeDur - m_PauseDur;
-            return _TimerDur.count();
+            _TimerDur                           = _RealTimeDur - m_PauseDur;
         } else {
             const DurationType _CurrentPuaseDur = _Now - m_PauseStart;
-            const DurationType _TimerDur        = _RealTimeDur - m_PauseDur - _CurrentPuaseDur;
-            return _TimerDur.count();
+            _TimerDur                           = _RealTimeDur - m_PauseDur - _CurrentPuaseDur;
         }
+        m_LastCallTime = _TimerDur.count();
+        return m_LastCallTime;
+    }
+
+    RepType Last() const {
+        return m_LastCallTime;
     }
 
     void Start() {
@@ -42,7 +49,8 @@ public:
             CORE_WARN("Invalid Timer operation: Attempt to start an started Timer.\n");
             return;
         }
-        m_Start = ClockType::now();
+        m_Start     = ClockType::now();
+        m_PauseDur  = DurationType::zero();
         m_IsStarted = true;
         m_IsRunning = true;
     }
@@ -54,6 +62,7 @@ public:
         }
         m_IsStarted = false;
         m_IsRunning = false;
+        m_LastCallTime = 0.0;
     }
 
     void Pause() {
@@ -90,6 +99,8 @@ private:
     TimePointType m_Start;
     TimePointType m_PauseStart;
     DurationType m_PauseDur;
+
+    mutable RepType m_LastCallTime;
 
     bool m_IsStarted; // ? started : un-started
     bool m_IsRunning; // ? running : paused

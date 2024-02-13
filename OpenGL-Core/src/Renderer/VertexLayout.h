@@ -23,12 +23,12 @@ public:
     static constexpr std::uint32_t GetElementComponentCount(ShaderDataType _Type);
     static constexpr std::size_t GetElementSize(ShaderDataType _Type);
 
-    Iterator begin()                { return m_Layout.begin(); }
-    ConstIterator begin() const     { return m_Layout.begin(); }
-    Iterator end()                  { return m_Layout.end(); }
-    ConstIterator end() const       { return m_Layout.end(); }
-    ConstIterator cbegin() const    { return begin(); }
-    ConstIterator cend() const      { return end(); }
+    constexpr Iterator begin()                { return m_Layout.begin(); }
+    constexpr ConstIterator begin() const     { return m_Layout.begin(); }
+    constexpr Iterator end()                  { return m_Layout.end(); }
+    constexpr ConstIterator end() const       { return m_Layout.end(); }
+    constexpr ConstIterator cbegin() const    { return begin(); }
+    constexpr ConstIterator cend() const      { return end(); }
 
     std::size_t Stride() const { return m_Stride; }
 
