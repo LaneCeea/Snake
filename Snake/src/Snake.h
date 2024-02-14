@@ -16,8 +16,8 @@ public:
     };
 
     using Coord             = glm::ivec2;
-    using BodyContainer     = std::deque<glm::ivec2>;
-    using TargetContainer   = std::vector<glm::ivec2>;
+    using BodyContainer     = std::deque<Coord>;
+    using TargetContainer   = std::vector<Coord>;
 
 public:
     Snake();
@@ -25,9 +25,10 @@ public:
     void Restart();
     void Move(MoveDirection _Dir);
 
-    const BodyContainer& Body() const       { return m_Body; }
-    const TargetContainer& Target() const   { return m_Target; }
-    constexpr bool IsGameEnd() const        { return m_IsGameEnd; }
+    const BodyContainer&    Body() const        { return m_Body; }
+    const Coord&            Head() const        { return m_Body.back(); }
+    const TargetContainer&  Target() const      { return m_Target; }
+    constexpr bool          IsGameEnd() const   { return m_IsGameEnd; }
 
     void PrintBody() const;
 

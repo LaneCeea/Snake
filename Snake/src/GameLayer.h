@@ -7,6 +7,7 @@
 #include <Core/Timer.h>
 #include <Event/KeyEvent.h>
 #include <Renderer/Shader.h>
+#include <Renderer/Texture.h>
 
 #include <memory>
 
@@ -30,6 +31,8 @@ private:
 	Snake::MoveDirection m_SnakeNextDir;
 
 	Shader m_FlatColorShader;
+	Shader m_BasicTextureShader;
+	Texture m_ExplosionTexture;
 
 	Timer m_GlobalTimer;
 	Timer m_Igt; // in-game timer

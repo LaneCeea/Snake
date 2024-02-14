@@ -79,6 +79,7 @@ void RendererAPI::Init() {
         opengl, glsl, vendor, renderer
     );
     CORE_INFO("%s\n\n", GLM_VERSION_MESSAGE);
+    CORE_INFO("stb_image - v2.29\n\n");
 
     glEnable(GL_DEPTH_TEST);
 

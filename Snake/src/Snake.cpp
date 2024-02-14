@@ -20,6 +20,8 @@ Snake::Snake() :
         glm::ivec2(-3, -3),
         glm::ivec2(-5,  3),
         glm::ivec2( 4,  4),
+        glm::ivec2( 2, -3),
+        glm::ivec2(-8, -7),
     }),
     m_IsGameEnd(false) {
 
@@ -38,6 +40,8 @@ void Snake::Restart() {
         glm::ivec2(-3, -3),
         glm::ivec2(-5,  3),
         glm::ivec2( 4,  4),
+        glm::ivec2( 2, -3),
+        glm::ivec2(-8, -7),
     };
     m_IsGameEnd = false;
 }
@@ -78,7 +82,7 @@ void Snake::Move(MoveDirection _Dir){
         m_Target.erase(_CollideTarget);
 
         auto& _Rand = RandomInt32<std::int32_t>::getInstance();
-        _Rand.setParam(-15, 15);
+        _Rand.setParam(-5, 5);
         m_Target.emplace_back(_Rand.getNum(), _Rand.getNum());
     } else {
         m_Body.pop_front();
